@@ -17,7 +17,7 @@ This is the official inference code for SiamMask (CVPR2019). For technical detai
 2. [Testing Models](#testing-models)
 
 ## Environment Setup
-All the code has been tested on Ubuntu 16.04, Python 3.6, Pytorch 0.4.1, CUDA 9.2, GTX 2080 GPUs
+All the code has been tested on Ubuntu 16.04, Python 3.6, Pytorch 0.4.1, CUDA 9.2, RTX 2080 GPUs
 
 - Clone the repository 
 ```
@@ -95,7 +95,7 @@ These are the reproduction results from this repository. All results can be down
 |     <sub>[SiamMask w/o Mask](http://bo-li.info/SiamRPN++/)</sub>       |       <sub>0.412 / 0.623 / 0.233</sub>       |       <sub>0.363 / 0.584 / 0.300</sub>       |               - / -              |               - / -              |                      - / - / - / -                       | <sub>**76.95** FPS</sub> |
 | <sub>**[SiamMask](http://www.robots.ox.ac.uk/~qwang/SiamMask/)**</sub> | <sub>**0.433** / **0.639** / **0.214**</sub> | <sub>**0.380** / **0.609** / **0.276**</sub> | <sub>**0.713** / **0.674**</sub> | <sub>**0.543** / **0.585**</sub> | <sub>**0.602** / **0.451** / **0.582** / **0.477**</sub> |   <sub>56.23 FPS</sub>   |
 
-**Note:** Speed are tested on a GTX 2080
+**Note:** Speed are tested on a RTX 2080
 
 
 ## License

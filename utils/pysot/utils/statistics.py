@@ -54,32 +54,12 @@ def calculate_accuracy(pred_trajectory, gt_trajectory,
             gt_trajectory[:min_len], bound)
 
     if not ignore_unknown:
-        overlaps = [x if u else 0 for u in unkown]
+        overlaps = [u if u else 0 for u in unkown]
 
     acc = 0
     if len(overlaps) > 0:
         acc = np.nanmean(overlaps)
     return acc, overlaps
-
-# def caculate_expected_overlap(pred_trajectorys, gt_trajectorys, skip_init, traj_length=None,
-#         weights=None, tags=['all']):
-#     """ Caculate expected overlap
-#     Args:
-#         pred_trajectory: list of bbox
-#         gt_trajectory: list of bbox
-#         traj_length: a list of sequence length for which the overlap should be evaluated
-#         weights: a list of per-sequence weights that indicate how much does each sequence
-#                 contribute to the estimate
-#         tags:  set list of tags for which to perform calculation
-#     """
-#     overlaps = [calculate_accuracy(pred, gt)[1]
-#             for pred, gt in zip(pred_trajectorys, gt_trajectorys)]
-#     failures = [calculate_accuracy(pred, gt)[1]
-#             for pred, gt in zip(pred_trajectorys, gt_trajectorys)]
-# 
-#     if traj_length is None:
-#         traj_length = range(1, max([len(x) for x in gt_trajectorys])+1)
-#     traj_length = list(set(traj_length))
 
 @jit(nopython=True)
 def overlap_ratio(rect1, rect2):
