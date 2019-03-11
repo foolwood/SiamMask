@@ -216,14 +216,8 @@ def siamese_track(state, im, mask_enable=False, refine_enable=False):
         sz2 = (w + pad) * (h + pad)
         return np.sqrt(sz2)
 
-    def sz_wh(wh):
-        pad = (wh[0] + wh[1]) * 0.5
-        sz2 = (wh[0] + pad) * (wh[1] + pad)
-        return np.sqrt(sz2)
-
     # size penalty
-    target_sz_in_crop = target_sz*scale_x
-    s_c = change(sz(delta[2, :], delta[3, :]) / (sz_wh(target_sz_in_crop)))  # scale penalty
+    s_c = change(sz(delta[2, :], delta[3, :]) / p.exemplar_size)  # scale penalty
     r_c = change((target_sz_in_crop[0] / target_sz_in_crop[1]) / (delta[2, :] / delta[3, :]))  # ratio penalty
 
     penalty = np.exp(-(r_c * s_c - 1) * p.penalty_k)
