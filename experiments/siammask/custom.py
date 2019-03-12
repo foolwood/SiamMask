@@ -148,8 +148,7 @@ class Custom(SiamMask):
     def track_mask(self, search):
         self.feature, self.search = self.features.forward_all(search)
         rpn_pred_cls, rpn_pred_loc = self.rpn(self.zf, self.search)
-        self.corr_feature = self.mask_model.mask.forward_corr(self.zf, self.search)
-        pred_mask = self.mask_model.mask.head(self.corr_feature)
+        pred_mask = self.mask_model.mask(self.zf, self.search)
         return rpn_pred_cls, rpn_pred_loc, pred_mask
 
     def track_refine(self, pos):
