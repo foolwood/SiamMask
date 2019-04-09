@@ -1,5 +1,7 @@
 # SiamMask
 
+[![PWC](https://img.shields.io/endpoint.svg?url=https://paperswithcode.com/badge/fast-online-object-tracking-and-segmentation/visual-object-tracking-vot201718)](https://paperswithcode.com/sota/visual-object-tracking-vot201718?p=fast-online-object-tracking-and-segmentation)
+
 This is the official inference code for SiamMask (CVPR2019). For technical details, please refer to:
 
 **Fast Online Object Tracking and Segmentation: A Unifying Approach** <br />
