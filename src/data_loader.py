@@ -185,9 +185,8 @@ class TrainDataLoader(object):
             gt_path = osp.join(sub_class_dir_path, sub_class_gt_name)
             with open(gt_path, 'r') as f:
                 lines = f.readlines()
-            cords_of_template_abs  = [abs(int(float(i))) for i in re.split(', \t',lines[template_index].strip('\n')[:4]]
-            cords_of_detection_abs = [abs(int(float(i))) for i in re..split(', \t',lines[detection_index].strip('\n')[:4]]
-            
+            cords_of_template_abs  = [abs(int(float(i))) for i in lines[template_index].strip('\n').replace('\t',',').split(',')[:4]]
+            cords_of_detection_abs = [abs(int(float(i))) for i in lines[detection_index].strip('\n').replace('\t',',').split(',')[:4]]
             if cords_of_template_abs[2]*cords_of_template_abs[3]*cords_of_detection_abs[2]*cords_of_detection_abs[3] != 0: 
                 status = False
             else:
@@ -196,8 +195,8 @@ class TrainDataLoader(object):
         # load infomation of template and detection
         self.ret['template_img_path']      = template_img_path
         self.ret['detection_img_path']     = detection_img_path
-        self.ret['template_target_x1y1wh'] = [int(float(i)) for i in lines[template_index].strip('\n').split(',')[:4]]
-        self.ret['detection_target_x1y1wh']= [int(float(i)) for i in lines[detection_index].strip('\n').split(',')[:4]]
+        self.ret['template_target_x1y1wh'] = [int(float(i)) for i in lines[template_index].strip('\n').replace('\t',',').split(',')[:4]]
+        self.ret['detection_target_x1y1wh']= [int(float(i)) for i in lines[detection_index].strip('\n').replace('\t',',').split(',')[:4]]
         t1, t2 = self.ret['template_target_x1y1wh'].copy(), self.ret['detection_target_x1y1wh'].copy()
         self.ret['template_target_xywh'] = np.array([t1[0]+t1[2]//2, t1[1]+t1[3]//2, t1[2], t1[3]], np.float32)
         self.ret['detection_target_xywh']= np.array([t2[0]+t2[2]//2, t2[1]+t2[3]//2, t2[2], t2[3]], np.float32)
