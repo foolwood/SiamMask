@@ -155,4 +155,13 @@ class Custom(SiamMask):
     def track_refine(self, pos):
         pred_mask = self.refine_model(self.feature, self.corr_feature, pos=pos)
         return pred_mask
+    
+    def forward(self, z, x):
+        z_f = self.features(z)
+        x_f = self.features(x)
+        mout = self.mask_model(z_f, x_f)
+        cout,rout = self.rpn_model(z_f,x_f)
+
+        return cout.view(-1,2),rout.view(-1,4),mout
+
 
