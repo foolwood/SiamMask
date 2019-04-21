@@ -11,7 +11,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from utils.load_helper import load_pretrain
-from resnet import resnet50
+from experiments.siammask.resnet import resnet50
 
 
 class ResDownS(nn.Module):

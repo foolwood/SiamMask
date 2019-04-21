@@ -3,6 +3,8 @@
 # Licensed under The MIT License
 # Written by Qiang Wang (wangqiang2015 at ia.ac.cn)
 # --------------------------------------------------------
+import sys
+sys.path.append("C:/Users/sport/Desktop/SiamMask-Pytorch/SiamMask")
 import glob
 from tools.test import *
 
@@ -22,7 +24,7 @@ if __name__ == '__main__':
 
     # Setup Model
     cfg = load_config(args)
-    from custom import Custom
+    from experiments.siammask.custom import Custom
     siammask = Custom(anchors=cfg['anchors'])
     if args.resume:
         assert isfile(args.resume), '{} is not a valid file'.format(args.resume)

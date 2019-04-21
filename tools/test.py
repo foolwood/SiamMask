@@ -3,6 +3,8 @@
 # Licensed under The MIT License
 # Written by Qiang Wang (wangqiang2015 at ia.ac.cn)
 # --------------------------------------------------------
+
+
 from __future__ import division
 import argparse
 import logging
@@ -11,6 +13,9 @@ import cv2
 from PIL import Image
 from os import makedirs
 from os.path import join, isdir, isfile
+
+import sys
+sys.path.append("C:/Users/sport/Desktop/SiamMask-Pytorch/SiamMask")
 
 from utils.log_helper import init_log, add_file_handler
 from utils.load_helper import load_pretrain
