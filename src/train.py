@@ -2,7 +2,7 @@ import os
 import os.path as osp
 import random
 import time
-import sys; 
+import sys
 sys.path.append("C:/Users/sport/Desktop/GIT/SiamMask")#sys.path.append('../')
 import torch
 import torch.nn as nn
@@ -22,9 +22,9 @@ from tools.test import *
 # from shapely.geometry import Polygon
 parser = argparse.ArgumentParser(description='PyTorch SiameseRPN Training')
 
-parser.add_argument('--train_path', default='C:/Users/sport/Desktop/GIT/SiamMask/data/OTB2015', metavar='DIR',help='path to dataset')
+parser.add_argument('--train_path', default='C:/Users/sport/Desktop/SiamMask-Pytorch/OTB2015/', metavar='DIR',help='path to dataset')
 
-parser.add_argument('--weight_dir', default='C:/Users/sport/Desktop/GIT/SiamMask/data/', metavar='DIR',help='path to weight')
+parser.add_argument('--weight_dir', default='C:/Users/sport/Desktop/SiamMask-Pytorch/OTB2015/', metavar='DIR',help='path to weight')
 
 parser.add_argument('--checkpoint_path', default=None, help='resume')
 
@@ -52,7 +52,8 @@ def main():
     args = parser.parse_args()
 
     """ train dataloader """
-    data_loader = TrainDataLoader("C:/Users/sport/Desktop/GIT/SiamMask/data/OTB2015")
+    data_loader = TrainDataLoader("C:/Users/sport/Desktop/SiamMask-Pytorch/OTB2015/")
+
     print('-')
 
     """ compute max_batches """
