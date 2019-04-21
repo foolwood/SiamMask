@@ -164,11 +164,11 @@ class TrainDataLoader(object):
         # use index_of_subclass to select a sub directory
         assert index_of_subclass < len(self.sub_class_dir), 'index_of_subclass should less than total classes'
         sub_class_dir_basename = self.sub_class_dir[index_of_subclass]
-        sub_class_dir_path = os.path.join(self.img_dir_path, sub_class_dir_basename)
+        sub_class_dir_path = os.path.join(self.img_dir_path, sub_class_dir_basename, sub_class_dir_basename,'img')
         sub_class_img_name = [img_name for img_name in os.listdir(sub_class_dir_path) if not img_name.find('.jpg') == -1]        
         sub_class_img_name = sorted(sub_class_img_name)
         sub_class_img_num  = len(sub_class_img_name)
-        sub_class_gt_name  = 'groundtruth.txt'
+        sub_class_gt_name  = 'groundtruth_rect.txt'
 
         # select template, detection
         # ++++++++++++++++++++++++++++ add break in sequeence [0,0,0,0] ++++++++++++++++++++++++++++++++++
@@ -182,7 +182,7 @@ class TrainDataLoader(object):
 
             template_name, detection_name  = sub_class_img_name[template_index], sub_class_img_name[detection_index]
             template_img_path, detection_img_path = osp.join(sub_class_dir_path, template_name), osp.join(sub_class_dir_path, detection_name)
-            gt_path = osp.join(sub_class_dir_path, sub_class_gt_name)
+            gt_path = osp.join(os.path.dirname(sub_class_dir_path), sub_class_gt_name)
             with open(gt_path, 'r') as f:
                 lines = f.readlines()
             cords_of_template_abs  = [abs(int(float(i))) for i in lines[template_index].strip('\n').replace('\t',',').split(',')[:4]]
@@ -438,11 +438,11 @@ class TrainDataLoader(object):
 if __name__ == '__main__':
     # we will do a test for dataloader
     # loader = TrainDataLoader('/home/song/srpn/dataset/simple_vot13', check = True)
-    loader = TrainDataLoader('C:/Users/sport/Desktop/GIT/Siamese-RPN-pytorch/data', check = True)
+    loader = TrainDataLoader('C:/Users/sport/Desktop/SiamMask-Pytorch/OTB2015', check = True)
     print('Number of Sub-Directories:', loader.__len__())
     index_list = range(loader.__len__())
 
-    for i in range(1000):
+    for i in range(10):
         ret = loader.__get__(random.choice(index_list))
         print('printing',(ret['detection_tensor']).shape)
         label = ret['pos_neg_diff'][:, 0].reshape(-1)
