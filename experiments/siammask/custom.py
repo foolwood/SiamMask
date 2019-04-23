@@ -23,7 +23,7 @@ class ResDownS(nn.Module):
 
     def forward(self, x):
         x = self.downsample(x)
-        if x.size(3) < 20:
+        if x.size(3) < 15:
             l, r = 4, -4
             x = x[:, :, l:r, l:r]
         return x
@@ -76,7 +76,7 @@ class MaskCorr(Mask):
         self.mask = DepthCorr(256, 256, self.oSz**2)
 
     def forward(self, z, x):
-        return self.mask(z, x)
+        return self.mask.forward_corr(z, x) ## Changed
 
 
 class Refine(nn.Module):
@@ -157,11 +157,14 @@ class Custom(SiamMask):
         return pred_mask
     
     def forward(self, z, x):
-        z_f = self.features(z)
-        x_f = self.features(x)
+        _,z_f = self.features.forward_all(z)
+        f,x_f = self.features.forward_all(x)
         mout = self.mask_model(z_f, x_f)
+        corr_feature = mout
+        mask = 0
+        # mask = [self.refine_model(f,corr_feature, (i,j)).sigmoid().view(127,127) for i in range(17) for j in range(17)]
         cout,rout = self.rpn_model(z_f,x_f)
 
-        return cout.view(-1,2),rout.view(-1,4),mout
+        return cout.view(-1,2),rout.view(-1,4),mask
 
 

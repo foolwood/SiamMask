@@ -3,7 +3,7 @@ import os.path as osp
 import random
 import time
 import sys
-sys.path.append("C:/Users/sport/Desktop/GIT/SiamMask")#sys.path.append('../')
+sys.path.append("C:/Users/sport/Desktop/SiamMask-Pytorch/SiamMask")#sys.path.append('../')
 import torch
 import torch.nn as nn
 import numpy as np
@@ -14,17 +14,13 @@ import argparse
 from data_loader import TrainDataLoader
 from torch.nn import init
 from tools.test import *
+from shapely.geometry import Polygon
 
-
-
-
-
-# from shapely.geometry import Polygon
 parser = argparse.ArgumentParser(description='PyTorch SiameseRPN Training')
 
-parser.add_argument('--train_path', default='C:/Users/sport/Desktop/SiamMask-Pytorch/OTB2015/', metavar='DIR',help='path to dataset')
+parser.add_argument('--train_path', default='C:\\Users\\sport\\Desktop\\SiamMask-Pytorch\\DAVIS-4\\JPEGImages\\480p', metavar='DIR',help='path to dataset')
 
-parser.add_argument('--weight_dir', default='C:/Users/sport/Desktop/SiamMask-Pytorch/OTB2015/', metavar='DIR',help='path to weight')
+parser.add_argument('--weight_dir', default='C:\\Users\\sport\\Desktop\\SiamMask-Pytorch\\DAVIS-4\\JPEGImages\\480p', metavar='DIR',help='path to weight')
 
 parser.add_argument('--checkpoint_path', default=None, help='resume')
 
@@ -52,7 +48,7 @@ def main():
     args = parser.parse_args()
 
     """ train dataloader """
-    data_loader = TrainDataLoader("C:/Users/sport/Desktop/SiamMask-Pytorch/OTB2015/")
+    data_loader = TrainDataLoader("C:\\Users\\sport\\Desktop\\SiamMask-Pytorch\\DAVIS-4\\JPEGImages\\480p")
 
     print('-')
 
@@ -88,16 +84,14 @@ def main():
         index_list = range(data_loader.__len__()) 
         for example in range(args.max_batches):
             ret = data_loader.__get__(random.choice(index_list)) 
-            template = ret['template_tensor'].cuda()
-            detection= ret['detection_tensor'].cuda()
-            pos_neg_diff = ret['pos_neg_diff_tensor'].cuda()
-            cout, rout, mout = model(template, detection)
-            predictions, targets = (cout, rout), pos_neg_diff
-            closs, rloss, loss, reg_pred, reg_target, pos_index, neg_index = criterion(predictions, targets)
+            template = ret['template_tensor'].to(device)
+            detection= ret['detection_tensor'].to(device)
+            mask_target = ret['mask_template_tensor'].to(device)
+            pos_neg_diff = ret['pos_neg_diff_tensor'].to(device)
+            cout, rout, mask = model(template, detection)
+            predictions, targets = (cout, rout, mask), pos_neg_diff
+            closs, rloss, mloss, loss, reg_pred, reg_target, pos_index, neg_index = criterion(predictions, targets, mask_target)
             closs_ = closs.cpu().item()
-
-            if closs > 10:
-                print()
 
             if np.isnan(closs_): 
                sys.exit(0)
@@ -113,13 +107,17 @@ def main():
 
                         
             cout = cout.cpu().detach().numpy()
-            score = 1/(1 + np.exp(cout[:,0]-cout[:,1]))
+            # score = 1/(1 + np.exp(cout[:,0]-cout[:,1]))
             print("Epoch:{:04d}\texample:{:06d}/{:06d}({:.2f})%\tsteps:{:010d}\tlr:{:.7f}\tcloss:ss:{:.4f}\ttloss:{:.4f}".format(epoch, example+1, args.max_batches, 100*(example+1)/args.max_batches, steps, cur_lr, closses.avg, rlosses.avg, tlosses.avg ))
 
-
-
-
-
+        if epoch % 5 == 0 :
+            file_path = os.path.join(args.weight_dir, 'epoch_{:04d}_weights.pth.tar'.format(epoch))
+            state = {
+            'epoch' :epoch+1,
+            'state_dict' :model.state_dict(),
+            'optimizer' : optimizer.state_dict(),
+            }
+            torch.save(state, file_path)
 
 
 
@@ -128,9 +126,9 @@ class MultiBoxLoss(nn.Module):
     def __init__(self):
         super(MultiBoxLoss, self).__init__()
 
-    def forward(self, predictions, targets):
+    def forward(self, predictions, targets, mask_target):
         # print('+++++++++++++++++++++++++++++++++++++++++++++++++++')
-        cout, rout = predictions
+        cout, rout, mask = predictions
         """ class """
         class_pred, class_target = cout, targets[:, 0].long()
         pos_index , neg_index    = list(np.where(class_target.cpu() == 1)[0]), list(np.where(class_target.cpu() == 0)[0])
@@ -147,8 +145,26 @@ class MultiBoxLoss(nn.Module):
         rloss = torch.div(torch.sum(rloss, dim = 1), 4)
         rloss = torch.div(torch.sum(rloss[pos_index]), 16)
 
-        loss = closs + rloss
-        return closs, rloss, loss, reg_pred, reg_target, pos_index, neg_index
+        """ mask """
+        cls_score = targets[:,0].cpu()
+        cls_idx = (np.array(np.where(cls_score == 1))/5).astype(int).flatten()
+        loc = np.unravel_index(cls_idx, (17,17))
+        pos = []
+        x,y = loc
+        for x,y in zip(x,y):
+            if (x,y) not in pos:
+                pos.append((x,y))
+        # c = mask_target.view(-1)
+        # BCELoss = torch.nn.BCELoss()
+        mloss = 0
+        # for i in range(len(pos)):
+        #     m = mask[pos[i][0]*17 + pos[i][1]].view(-1)
+        #     mloss += BCELoss(m,c)/(127*127)
+
+
+
+        loss = closs + rloss + 32*mloss
+        return closs, rloss, mloss, loss, reg_pred, reg_target, pos_index, neg_index
 
 class AverageMeter(object):
     """Computes and stores the average and current value"""
