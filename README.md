@@ -15,8 +15,8 @@ This is the official inference code for SiamMask (CVPR2019). For technical detai
 
 ## Contents
 1. [Environment Setup](#environment-setup)
-3. [Demo](#demo)
-2. [Testing Models](#testing-models)
+2. [Demo](#demo)
+3. [Testing Models](#testing-models)
 
 ## Environment Setup
 All the code has been tested on Ubuntu 16.04, Python 3.6, Pytorch 0.4.1, CUDA 9.2, RTX 2080 GPUs
@@ -43,8 +43,8 @@ export PYTHONPATH=$PWD:$PYTHONPATH
 - Download the SiamMask model
 ```shell
 cd $SiamMask/experiments/siammask
-wget -q http://www.robots.ox.ac.uk/~qwang/SiamMask_VOT.pth
-wget -q http://www.robots.ox.ac.uk/~qwang/SiamMask_DAVIS.pth
+wget http://www.robots.ox.ac.uk/~qwang/SiamMask_VOT.pth
+wget http://www.robots.ox.ac.uk/~qwang/SiamMask_DAVIS.pth
 ```
 - Run `demo.py`
 
@@ -64,20 +64,26 @@ python ../../tools/demo.py --resume SiamMask_DAVIS.pth --config config_davis.jso
 - Download test data
 ```shell
 cd $SiamMask/data
+sudo apt-get install jq
 bash get_test_data.sh
 ```
 - Download pretrained models
 ```shell
 cd $SiamMask/experiments/siammask
-wget -q http://www.robots.ox.ac.uk/~qwang/SiamMask_VOT.pth
-wget -q http://www.robots.ox.ac.uk/~qwang/SiamMask_DAVIS.pth
+wget http://www.robots.ox.ac.uk/~qwang/SiamMask_VOT.pth
+wget http://www.robots.ox.ac.uk/~qwang/SiamMask_VOT_LD.pth
+wget http://www.robots.ox.ac.uk/~qwang/SiamMask_DAVIS.pth
 ```
 - Evaluate performance on [VOT](http://www.votchallenge.net/)
 ```shell
 bash test_mask_refine.sh config_vot.json SiamMask_VOT.pth VOT2016 0
 bash test_mask_refine.sh config_vot.json SiamMask_VOT.pth VOT2018 0
-python ../../tools/eval.py --dataset VOT2016 --tracker_prefix Cus  --result_dir ./test/VOT2016
-python ../../tools/eval.py --dataset VOT2018 --tracker_prefix Cus  --result_dir ./test/VOT2018
+bash test_mask_refine.sh config_vot.json SiamMask_VOT.pth VOT2019 0
+bash test_mask_refine.sh config_vot18.json SiamMask_VOT_LD.pth VOT2016 0
+bash test_mask_refine.sh config_vot18.json SiamMask_VOT_LD.pth VOT2018 0
+python ../../tools/eval.py --dataset VOT2016 --tracker_prefix C --result_dir ./test/VOT2016
+python ../../tools/eval.py --dataset VOT2018 --tracker_prefix C --result_dir ./test/VOT2018
+python ../../tools/eval.py --dataset VOT2019 --tracker_prefix C --result_dir ./test/VOT2019
 ```
 - Evaluate performance on [DAVIS](https://davischallenge.org/) (less than 50s)
 ```shell
@@ -92,12 +98,16 @@ bash test_mask_refine.sh config_davis.json SiamMask_DAVIS.pth ytb_vos 0
 ### Results
 These are the reproduction results from this repository. All results can be downloaded from our [project page](http://www.robots.ox.ac.uk/~qwang/SiamMask/).
 
-|                           <sub>Tracker</sub>                           |      <sub>VOT2016</br>EAO /  A / R</sub>     |      <sub>VOT2018</br>EAO / A / R</sub>      |  <sub>DAVIS2016</br>J / F</sub>  |  <sub>DAVIS2017</br>J / F</sub>  |     <sub>Youtube-VOS</br>J_s / J_u / F_s / F_u</sub>     |     <sub>Speed</sub>     |
-|:----------------------------------------------------------------------:|:--------------------------------------------:|:--------------------------------------------:|:--------------------------------:|:--------------------------------:|:--------------------------------------------------------:|:------------------------:|
-|     <sub>[SiamMask w/o Mask](http://bo-li.info/SiamRPN++/)</sub>       |       <sub>0.412 / 0.623 / 0.233</sub>       |       <sub>0.363 / 0.584 / 0.300</sub>       |               - / -              |               - / -              |                      - / - / - / -                       | <sub>**76.95** FPS</sub> |
-| <sub>**[SiamMask](http://www.robots.ox.ac.uk/~qwang/SiamMask/)**</sub> | <sub>**0.433** / **0.639** / **0.214**</sub> | <sub>**0.380** / **0.609** / **0.276**</sub> | <sub>**0.713** / **0.674**</sub> | <sub>**0.543** / **0.585**</sub> | <sub>**0.602** / **0.451** / **0.582** / **0.477**</sub> |   <sub>56.23 FPS</sub>   |
+|            <sub>Tracker</sub>            |   <sub>VOT2016</br>EAO /  A / R</sub>    |    <sub>VOT2018</br>EAO / A / R</sub>    | <sub>DAVIS2016</br>J / F</sub> | <sub>DAVIS2017</br>J / F</sub> | <sub>Youtube-VOS</br>J_s / J_u / F_s / F_u</sub> |   <sub>Speed</sub>    |
+| :--------------------------------------: | :--------------------------------------: | :--------------------------------------: | :----------------------------: | :----------------------------: | :--------------------------------------: | :-------------------: |
+| <sub>[SiamMask-box](http://www.robots.ox.ac.uk/~qwang/SiamMask/)</sub> |       <sub>0.412/0.623/0.233</sub>       |       <sub>0.363/0.584/0.300</sub>       |             - / -              |             - / -              |              - / - / - / -               | <sub>**77** FPS</sub> |
+| <sub>[SiamMask](http://www.robots.ox.ac.uk/~qwang/SiamMask/)</sub> | <sub>**0.433**/**0.639**/**0.214**</sub> | <sub>**0.380**/**0.609**/**0.276**</sub> | <sub>**0.713**/**0.674**</sub> | <sub>**0.543**/**0.585**</sub> | <sub>**0.602**/**0.451**/**0.582**/**0.477**</sub> |   <sub>56 FPS</sub>   |
+| <sub>[SiamMask-LD](http://www.robots.ox.ac.uk/~qwang/SiamMask/)</sub> | <sub>**0.455**/**0.634**/**0.219**</sub> | <sub>**0.423**/**0.615**/**0.248**</sub> |             - / -              |             - / -              |              - / - / - / -               |   <sub>56 FPS</sub>   |
 
-**Note:** Speed are tested on a RTX 2080
+**Note:** 
+- Speed are tested on a NVIDIA RTX 2080. 
+- `-box` reports an axis-aligned bounding box from the box branch.
+- `-LD` means training with large datasets (ytb-bb+ytb-vos+vid+coco+det).
 
 
 ## License

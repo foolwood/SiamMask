@@ -21,7 +21,11 @@ class EAOBenchmark:
         self.skipping = skipping
         self.tags = tags
         # NOTE we not use gmm to generate low, high, peak value
-        if dataset.name == 'VOT2018' or dataset.name == 'VOT2017':
+        if dataset.name in ['VOT2019']:
+            self.low = 46
+            self.high = 291
+            self.peak = 128
+        elif dataset.name in ['VOT2018', 'VOT2017']:
             self.low = 100
             self.high = 356
             self.peak = 160
