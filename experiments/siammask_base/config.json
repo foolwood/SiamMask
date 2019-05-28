@@ -1,0 +1,100 @@
+{
+    "network": {
+        "arch": "Custom"
+    },
+    "hp": {
+        "instance_size": 255,
+        "base_size": 8
+    },
+    "lr": {
+        "type": "log",
+        "start_lr": 0.005,
+        "end_lr": 0.0025,
+        "warmup": {
+            "start_lr": 0.001,
+            "end_lr": 0.005,
+            "type": "step",
+            "step": 1,
+            "epoch": 5
+        }
+    },
+    "loss": {
+        "weight": [1.0, 1.2, 36]
+    },
+    "train_datasets": {
+        "datasets": {
+            "ytb_vos": {
+                "root": "../../data/ytb_vos/crop511",
+                "anno": "../../data/ytb_vos/train.json",
+                "num_use": 200000,
+                "frame_range": 20
+            },
+            "vid": {
+                "root": "../../data/vid/crop511",
+                "anno": "../../data/vid/train.json",
+                "num_use": 200000,
+                "frame_range": 100
+            },
+            "coco": {
+                "root": "../../data/coco/crop511",
+                "anno": "../../data/coco/train2017.json",
+                "frame_range": 1
+            },
+            "det": {
+                "root": "../../data/det/crop511",
+                "anno": "../../data/det/train.json",
+                "num_use": 100000,
+                "frame_range": 1
+            }
+        },
+        "template_size": 127,
+        "search_size": 255,
+        "base_size": 8,
+        "size": 25,
+
+        "num" : 600000,
+
+        "augmentation": {
+            "template": {
+                "shift": 4, "scale": 0.05
+            },
+            "search": {
+                "shift": 64, "scale": 0.18, "blur": 0.18
+            },
+            "neg": 0.2,
+            "gray": 0.25
+        }
+    },
+
+    "val_datasets": {
+        "datasets": {
+            "vid": {
+                "root": "../../data/vid/crop511",
+                "anno": "../../data/vid/val.json",
+                "num_use": 1000
+            }
+        },
+        "template_size": 127,
+        "search_size": 255,
+        "size": 17,
+
+        "num" : 1000,
+
+        "augmentation": {
+            "template": {
+                "shift": 0, "scale": 0.00
+            },
+            "search": {
+                "shift": 12, "scale": 0.18
+            },
+            "neg": 0,
+            "gray": 0
+        }
+    },
+    "anchors": {
+        "stride": 8,
+        "ratios": [0.33, 0.5, 1, 2, 3],
+        "scales": [8],
+        "round_dight": 0
+    }
+}

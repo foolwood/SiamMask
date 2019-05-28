@@ -9,9 +9,9 @@ from utils.anchors import Anchors
 
 class TrackerConfig(object):
     # These are the default hyper-params for SiamMask
-    penalty_k = 0.04
-    window_influence = 0.42
-    lr = 0.25
+    penalty_k = 0.09
+    window_influence = 0.39
+    lr = 0.38
     seg_thr = 0.3  # for mask
     windowing = 'cosine'  # to penalize large displacements [cosine/uniform]
     # Params from the network architecture, have to be consistent with the training

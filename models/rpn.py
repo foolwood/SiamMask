@@ -20,6 +20,14 @@ class RPN(nn.Module):
     def track(self, search):
         raise NotImplementedError
 
+    def param_groups(self, start_lr, feature_mult=1, key=None):
+        if key is None:
+            params = filter(lambda x:x.requires_grad, self.parameters())
+        else:
+            params = [v for k, v in self.named_parameters() if (key in k) and v.requires_grad]
+        params = [{'params': params, 'lr': start_lr * feature_mult}]
+        return params
+
 
 def conv2d_dw_group(x, kernel):
     batch, channel = kernel.shape[:2]

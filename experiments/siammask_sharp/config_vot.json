@@ -1,0 +1,20 @@
+{
+    "network": {
+        "arch": "Custom"
+    },
+    "hp": {
+        "instance_size": 255,
+        "base_size": 8,
+        "out_size": 127,
+        "seg_thr": 0.30,
+        "penalty_k": 0.04,
+        "window_influence": 0.42,
+        "lr": 0.25
+    },
+    "anchors": {
+        "stride": 8,
+        "ratios": [0.33, 0.5, 1, 2, 3],
+        "scales": [8],
+        "round_dight": 0
+    }
+}

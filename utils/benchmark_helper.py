@@ -21,8 +21,9 @@ def get_dataset_zoo():
         if not isdir(y): return False
 
         return exists(join(y, 'list.txt')) \
-               or exists(join(y, 'train', 'meta.json'))\
-               or exists(join(y, 'ImageSets', '2016', 'val.txt'))
+               or exists(join(y, 'train', 'meta.json')) \
+               or exists(join(y, 'ImageSets', '2016', 'val.txt')) \
+               or exists(join(y, 'ImageSets', '2017', 'test-dev.txt'))
 
     zoos = list(filter(valid, zoos))
     return zoos
@@ -54,7 +55,7 @@ def load_dataset(dataset):
                 gt = np.column_stack((gt[:, 0], gt[:, 1], gt[:, 0], gt[:, 1] + gt[:, 3]-1,
                                       gt[:, 0] + gt[:, 2]-1, gt[:, 1] + gt[:, 3]-1, gt[:, 0] + gt[:, 2]-1, gt[:, 1]))
             info[video] = {'image_files': image_files, 'gt': gt, 'name': video}
-    elif 'DAVIS' in dataset:
+    elif 'DAVIS' in dataset and 'TEST' not in dataset:
         base_path = join(realpath(dirname(__file__)), '../data', 'DAVIS')
         list_path = join(realpath(dirname(__file__)), '../data', 'DAVIS', 'ImageSets', dataset[-4:], 'val.txt')
         with open(list_path) as f:
@@ -91,6 +92,16 @@ def load_dataset(dataset):
                 end_file = objects[obj]['frames'][-1]
                 info[v]['start_frame'][obj] = frames.index(start_file)
                 info[v]['end_frame'][obj] = frames.index(end_file)
+    elif 'TEST' in dataset:
+        base_path = join(realpath(dirname(__file__)), '../data', 'DAVIS2017TEST')
+        list_path = join(realpath(dirname(__file__)), '../data', 'DAVIS2017TEST', 'ImageSets', '2017', 'test-dev.txt')
+        with open(list_path) as f:
+            videos = [v.strip() for v in f.readlines()]
+        for video in videos:
+            info[video] = {}
+            info[video]['anno_files'] = sorted(glob.glob(join(base_path, 'Annotations/480p', video, '*.png')))
+            info[video]['image_files'] = sorted(glob.glob(join(base_path, 'JPEGImages/480p', video, '*.jpg')))
+            info[video]['name'] = video
     else:
         logging.error('Not support')
         exit()

@@ -16,10 +16,11 @@ class Anchors:
         self.round_dight = 0
         self.image_center = 0
         self.size = 0
+        self.anchor_density = 1
 
         self.__dict__.update(cfg)
 
-        self.anchor_num = len(self.scales) * len(self.ratios)
+        self.anchor_num = len(self.scales) * len(self.ratios) * (self.anchor_density**2)
         self.anchors = None  # in single position (anchor_num*4)
         self.all_anchors = None  # in all position 2*(4*anchor_num*h*w)
         self.generate_anchors()
@@ -29,19 +30,25 @@ class Anchors:
 
         size = self.stride * self.stride
         count = 0
-        for r in self.ratios:
-            if self.round_dight > 0:
-                ws = round(math.sqrt(size*1. / r), self.round_dight)
-                hs = round(ws * r, self.round_dight)
-            else:
-                ws = int(math.sqrt(size*1. / r))
-                hs = int(ws * r)
+        anchors_offset = self.stride / self.anchor_density
+        anchors_offset = np.arange(self.anchor_density)*anchors_offset
+        anchors_offset = anchors_offset - np.mean(anchors_offset)
+        x_offsets, y_offsets = np.meshgrid(anchors_offset, anchors_offset)
 
-            for s in self.scales:
-                w = ws * s
-                h = hs * s
-                self.anchors[count][:] = [-w*0.5, -h*0.5, w*0.5, h*0.5][:]
-                count += 1
+        for x_offset, y_offset in zip(x_offsets.flatten(), y_offsets.flatten()):
+            for r in self.ratios:
+                if self.round_dight > 0:
+                    ws = round(math.sqrt(size*1. / r), self.round_dight)
+                    hs = round(ws * r, self.round_dight)
+                else:
+                    ws = int(math.sqrt(size*1. / r))
+                    hs = int(ws * r)
+
+                for s in self.scales:
+                    w = ws * s
+                    h = hs * s
+                    self.anchors[count][:] = [-w*0.5+x_offset, -h*0.5+y_offset, w*0.5+x_offset, h*0.5+y_offset][:]
+                    count += 1
 
     def generate_all_anchors(self, im_c, size):
         if self.image_center == im_c and self.size == size:
@@ -75,4 +82,9 @@ class Anchors:
         self.all_anchors = np.stack([x1, y1, x2, y2]), np.stack([cx, cy, w, h])
         return True
 
+
+# if __name__ == '__main__':
+#     anchors = Anchors(cfg={'stride':16, 'anchor_density': 2})
+#     anchors.generate_all_anchors(im_c=255//2, size=(255-127)//16+1+8)
+#     a = 1
 

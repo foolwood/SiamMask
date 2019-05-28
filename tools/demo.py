@@ -13,6 +13,7 @@ parser.add_argument('--resume', default='', type=str, required=True,
 parser.add_argument('--config', dest='config', default='config_davis.json',
                     help='hyper-parameter of SiamMask in json format')
 parser.add_argument('--base_path', default='../../data/tennis', help='datasets')
+parser.add_argument('--cpu', action='store_true', help='cpu mode')
 args = parser.parse_args()
 
 if __name__ == '__main__':
@@ -25,7 +26,7 @@ if __name__ == '__main__':
     from custom import Custom
     siammask = Custom(anchors=cfg['anchors'])
     if args.resume:
-        assert isfile(args.resume), '{} is not a valid file'.format(args.resume)
+        assert isfile(args.resume), 'Please download {} first.'.format(args.resume)
         siammask = load_pretrain(siammask, args.resume)
 
     siammask.eval().to(device)
@@ -49,9 +50,9 @@ if __name__ == '__main__':
         if f == 0:  # init
             target_pos = np.array([x + w / 2, y + h / 2])
             target_sz = np.array([w, h])
-            state = siamese_init(im, target_pos, target_sz, siammask, cfg['hp'])  # init tracker
+            state = siamese_init(im, target_pos, target_sz, siammask, cfg['hp'], device=device)  # init tracker
         elif f > 0:  # tracking
-            state = siamese_track(state, im, mask_enable=True, refine_enable=True)  # track
+            state = siamese_track(state, im, mask_enable=True, refine_enable=True, device=device)  # track
             location = state['ploygon'].flatten()
             mask = state['mask'] > state['p'].seg_thr
 

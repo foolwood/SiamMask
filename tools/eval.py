@@ -32,7 +32,7 @@ if __name__ == '__main__':
     assert len(trackers) > 0
     args.num = min(args.num, len(trackers))
 
-    if 'VOT2018' == args.dataset or 'VOT2016' == args.dataset:
+    if args.dataset in ['VOT2016', 'VOT2018', 'VOT2019']:
         dataset = VOTDataset(args.dataset, root)
         dataset.set_tracker(tracker_dir, trackers)
         ar_benchmark = AccuracyRobustnessBenchmark(dataset)

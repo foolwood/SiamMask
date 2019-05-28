@@ -1,0 +1,60 @@
+{
+    "network": {
+        "arch": "Custom"
+    },
+    "hp": {
+        "instance_size": 255,
+        "base_size": 8,
+        "out_size": 127,
+        "seg_thr": 0.35,
+        "penalty_k": 0.04,
+        "window_influence": 0.4,
+        "lr": 1.0
+    },
+    "lr": {
+        "type": "log",
+        "start_lr": 0.01,
+        "end_lr": 0.0025
+    },
+    "loss": {
+        "weight": [0, 0, 36]
+    },
+    "train_datasets": {
+        "datasets": {
+            "ytb_vos": {
+                "root": "../../data/ytb_vos/crop511",
+                "anno": "../../data/ytb_vos/train.json",
+                "num_use": 100000,
+                "frame_range": 20
+            },
+            "coco": {
+                "root": "../../data/coco/crop511",
+                "anno": "../../data/coco/train2017.json",
+                "frame_range": 1
+            }
+        },
+        "template_size": 127,
+        "search_size": 143,
+        "base_size": 0,
+        "size": 3,
+
+        "num" : 200000,
+
+        "augmentation": {
+            "template": {
+                "shift": 4, "scale": 0.05
+            },
+            "search": {
+                "shift": 8, "scale": 0.18, "blur": 0.18
+            },
+            "neg": 0,
+            "gray": 0.25
+        }
+    },
+    "anchors": {
+        "stride": 8,
+        "ratios": [0.33, 0.5, 1, 2, 3],
+        "scales": [8],
+        "round_dight": 0
+    }
+}

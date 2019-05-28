@@ -21,8 +21,6 @@ import torch
 from torch.autograd import Variable
 import torch.nn.functional as F
 
-import models
-
 from utils.anchors import Anchors
 from utils.tracker_config import TrackerConfig
 
@@ -31,17 +29,12 @@ from utils.pyvotkit.region import vot_overlap, vot_float2str
 
 thrs = np.arange(0.3, 0.5, 0.05)
 
-model_zoo = sorted(name for name in models.__dict__
-            if not name.startswith("__")
-            and callable(models.__dict__[name]))
-
-
 parser = argparse.ArgumentParser(description='Test SiamMask')
-parser.add_argument('--arch', dest='arch', default='', choices=model_zoo + ['Custom',],
+parser.add_argument('--arch', dest='arch', default='', choices=['Custom',],
                     help='architecture of pretrained model')
 parser.add_argument('--config', dest='config', required=True, help='hyper-parameter for SiamMask')
 parser.add_argument('--resume', default='', type=str, required=True,
-                    metavar='PATH',help='path to latest checkpoint (default: none)')
+                    metavar='PATH', help='path to latest checkpoint (default: none)')
 parser.add_argument('--mask', action='store_true', help='whether use mask output')
 parser.add_argument('--refine', action='store_true', help='whether use mask refine output')
 parser.add_argument('--dataset', dest='dataset', default='VOT2018', choices=dataset_zoo,
@@ -51,6 +44,9 @@ parser.add_argument('-v', '--visualization', dest='visualization', action='store
                     help='whether visualize result')
 parser.add_argument('--save_mask', action='store_true', help='whether use save mask for davis')
 parser.add_argument('--gt', action='store_true', help='whether use gt rect for davis (Oracle)')
+parser.add_argument('--video', default='', type=str, help='test special video')
+parser.add_argument('--cpu', action='store_true', help='cpu mode')
+parser.add_argument('--debug', action='store_true', help='debug mode')
 
 
 def to_torch(ndarray):
@@ -133,7 +129,7 @@ def generate_anchor(cfg, score_size):
     return anchor
 
 
-def siamese_init(im, target_pos, target_sz, model, hp=None):
+def siamese_init(im, target_pos, target_sz, model, hp=None, device='cpu'):
     state = dict()
     state['im_h'] = im.shape[0]
     state['im_w'] = im.shape[1]
@@ -145,9 +141,8 @@ def siamese_init(im, target_pos, target_sz, model, hp=None):
     net = model
     p.scales = model.anchors['scales']
     p.ratios = model.anchors['ratios']
-    p.anchor_num = len(p.ratios) * len(p.scales)
+    p.anchor_num = model.anchor_num
     p.anchor = generate_anchor(model.anchors, p.score_size)
-
     avg_chans = np.mean(im, axis=(0, 1))
 
     wc_z = target_sz[0] + p.context_amount * sum(target_sz)
@@ -157,7 +152,7 @@ def siamese_init(im, target_pos, target_sz, model, hp=None):
     z_crop = get_subwindow_tracking(im, target_pos, p.exemplar_size, s_z, avg_chans)
 
     z = Variable(z_crop.unsqueeze(0))
-    net.template(z.cuda())
+    net.template(z.to(device))
 
     if p.windowing == 'cosine':
         window = np.outer(np.hanning(p.score_size), np.hanning(p.score_size))
@@ -174,7 +169,7 @@ def siamese_init(im, target_pos, target_sz, model, hp=None):
     return state
 
 
-def siamese_track(state, im, mask_enable=False, refine_enable=False):
+def siamese_track(state, im, mask_enable=False, refine_enable=False, device='cpu', debug=False):
     p = state['p']
     net = state['net']
     avg_chans = state['avg_chans']
@@ -191,13 +186,21 @@ def siamese_track(state, im, mask_enable=False, refine_enable=False):
     s_x = s_x + 2 * pad
     crop_box = [target_pos[0] - round(s_x) / 2, target_pos[1] - round(s_x) / 2, round(s_x), round(s_x)]
 
+    if debug:
+        im_debug = im.copy()
+        crop_box_int = np.int0(crop_box)
+        cv2.rectangle(im_debug, (crop_box_int[0], crop_box_int[1]),
+                      (crop_box_int[0] + crop_box_int[2], crop_box_int[1] + crop_box_int[3]), (255, 0, 0), 2)
+        cv2.imshow('search area', im_debug)
+        cv2.waitKey(0)
+
     # extract scaled crops for search region x at previous target position
     x_crop = Variable(get_subwindow_tracking(im, target_pos, p.instance_size, round(s_x), avg_chans).unsqueeze(0))
 
     if mask_enable:
-        score, delta, mask = net.track_mask(x_crop.cuda())
+        score, delta, mask = net.track_mask(x_crop.to(device))
     else:
-        score, delta = net.track(x_crop.cuda())
+        score, delta = net.track(x_crop.to(device))
 
     delta = delta.permute(1, 2, 3, 0).contiguous().view(4, -1).data.cpu().numpy()
     score = F.softmax(score.permute(1, 2, 3, 0).contiguous().view(2, -1).permute(1, 0), dim=1).data[:,
@@ -251,7 +254,7 @@ def siamese_track(state, im, mask_enable=False, refine_enable=False):
         delta_x, delta_y = best_pscore_id_mask[2], best_pscore_id_mask[1]
 
         if refine_enable:
-            mask = net.track_refine((delta_y, delta_x)).cuda().sigmoid().squeeze().view(
+            mask = net.track_refine((delta_y, delta_x)).to(device).sigmoid().squeeze().view(
                 p.out_size, p.out_size).cpu().data.numpy()
         else:
             mask = mask[0, :, delta_y, delta_x].sigmoid(). \
@@ -306,13 +309,13 @@ def siamese_track(state, im, mask_enable=False, refine_enable=False):
 
     state['target_pos'] = target_pos
     state['target_sz'] = target_sz
-    state['score'] = score
+    state['score'] = score[best_pscore_id]
     state['mask'] = mask_in_img if mask_enable else []
     state['ploygon'] = rbox_in_img if mask_enable else []
     return state
 
 
-def track_vot(model, video, hp=None, mask_enable=False, refine_enable=False):
+def track_vot(model, video, hp=None, mask_enable=False, refine_enable=False, device='cpu'):
     regions = []  # result and states[1 init / 2 lost / 0 skip]
     image_files, gt = video['image_files'], video['gt']
 
@@ -325,11 +328,11 @@ def track_vot(model, video, hp=None, mask_enable=False, refine_enable=False):
             cx, cy, w, h = get_axis_aligned_bbox(gt[f])
             target_pos = np.array([cx, cy])
             target_sz = np.array([w, h])
-            state = siamese_init(im, target_pos, target_sz, model, hp)  # init tracker
+            state = siamese_init(im, target_pos, target_sz, model, hp, device)  # init tracker
             location = cxy_wh_2_rect(state['target_pos'], state['target_sz'])
             regions.append(1 if 'VOT' in args.dataset else gt[f])
         elif f > start_frame:  # tracking
-            state = siamese_track(state, im, mask_enable, refine_enable)  # track
+            state = siamese_track(state, im, mask_enable, refine_enable, device, args.debug)  # track
             if mask_enable:
                 location = state['ploygon'].flatten()
                 mask = state['mask']
@@ -382,6 +385,7 @@ def track_vot(model, video, hp=None, mask_enable=False, refine_enable=False):
                               (location[0] + location[2], location[1] + location[3]), (0, 255, 255), 3)
             cv2.putText(im_show, str(f), (40, 40), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 255), 2)
             cv2.putText(im_show, str(lost_times), (40, 80), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
+            cv2.putText(im_show, str(state['score']) if 'score' in state else '', (40, 120), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
 
             cv2.imshow(video['name'], im_show)
             cv2.waitKey(1)
@@ -452,7 +456,7 @@ def MultiBatchIouMeter(thrs, outputs, targets, start=None, end=None):
     return res
 
 
-def track_vos(model, video, hp=None, mask_enable=False, refine_enable=False, mot_enable=False):
+def track_vos(model, video, hp=None, mask_enable=False, refine_enable=False, mot_enable=False, device='cpu'):
     image_files = video['image_files']
 
     annos = [np.array(Image.open(x)) for x in video['anno_files']]
@@ -491,9 +495,9 @@ def track_vos(model, video, hp=None, mask_enable=False, refine_enable=False, mot
                 cx, cy = x + w/2, y + h/2
                 target_pos = np.array([cx, cy])
                 target_sz = np.array([w, h])
-                state = siamese_init(im, target_pos, target_sz, model, hp)  # init tracker
+                state = siamese_init(im, target_pos, target_sz, model, hp, device=device)  # init tracker
             elif end_frame >= f > start_frame:  # tracking
-                state = siamese_track(state, im, mask_enable, refine_enable)  # track
+                state = siamese_track(state, im, mask_enable, refine_enable, device=device)  # track
                 mask = state['mask']
             toc += cv2.getTickCount() - tic
             if end_frame >= f >= start_frame:
@@ -555,14 +559,14 @@ def main():
         from custom import Custom
         model = Custom(anchors=cfg['anchors'])
     else:
-        model = models.__dict__[args.arch](anchors=cfg['anchors'])
+        parser.error('invalid architecture: {}'.format(args.arch))
 
     if args.resume:
         assert isfile(args.resume), '{} is not a valid file'.format(args.resume)
         model = load_pretrain(model, args.resume)
     model.eval()
-    model = model.cuda()
-
+    device = torch.device('cuda' if (torch.cuda.is_available() and not args.cpu) else 'cpu')
+    model = model.to(device)
     # setup dataset
     dataset = load_dataset(args.dataset)
 
@@ -577,13 +581,16 @@ def main():
     speed_list = []
 
     for v_id, video in enumerate(dataset.keys(), start=1):
+        if args.video != '' and video != args.video:
+            continue
+
         if vos_enable:
             iou_list, speed = track_vos(model, dataset[video], cfg['hp'] if 'hp' in cfg.keys() else None,
-                                 args.mask, args.refine, args.dataset in ['DAVIS2017', 'ytb_vos'])
+                                 args.mask, args.refine, args.dataset in ['DAVIS2017', 'ytb_vos'], device=device)
             iou_lists.append(iou_list)
         else:
             lost, speed = track_vot(model, dataset[video], cfg['hp'] if 'hp' in cfg.keys() else None,
-                             args.mask, args.refine)
+                             args.mask, args.refine, device=device)
             total_lost += lost
         speed_list.append(speed)
 

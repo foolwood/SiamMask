@@ -18,3 +18,8 @@ class Mask(nn.Module):
 
     def track(self, search):
         raise NotImplementedError
+
+    def param_groups(self, start_lr, feature_mult=1):
+        params = filter(lambda x:x.requires_grad, self.parameters())
+        params = [{'params': params, 'lr': start_lr * feature_mult}]
+        return params
