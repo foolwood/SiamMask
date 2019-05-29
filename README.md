@@ -1,14 +1,29 @@
 # SiamMask
 
+**NEW** Now including code for both training and inference.
+
+
 [![PWC](https://img.shields.io/endpoint.svg?url=https://paperswithcode.com/badge/fast-online-object-tracking-and-segmentation/visual-object-tracking-vot201718)](https://paperswithcode.com/sota/visual-object-tracking-vot201718?p=fast-online-object-tracking-and-segmentation)
 
 This is the official implementation with *training* code for SiamMask (CVPR2019). For technical details, please refer to:
 
 **Fast Online Object Tracking and Segmentation: A Unifying Approach** <br />
 [Qiang Wang](http://www.robots.ox.ac.uk/~qwang/)\*, [Li Zhang](http://www.robots.ox.ac.uk/~lz)\*, [Luca Bertinetto](http://www.robots.ox.ac.uk/~luca)\*, [Weiming Hu](https://scholar.google.com/citations?user=Wl4tl4QAAAAJ&hl=en), [Philip H.S. Torr](https://scholar.google.it/citations?user=kPxa2w0AAAAJ&hl=en&oi=ao) (\* denotes equal contribution) <br />
-**CVPR2019** <br />
+**CVPR 2019** <br />
 **[[Paper](https://arxiv.org/abs/1812.05050)] [[Video](https://youtu.be/I_iOVrcpEBw)] [[Project Page](http://www.robots.ox.ac.uk/~qwang/SiamMask)]** <br />
 
+
+## Bibtex
+If you find this code useful, please consider citing:
+
+```
+@inproceedings{wang2019fast,
+    title={Fast online object tracking and segmentation: A unifying approach},
+    author={Wang, Qiang and Zhang, Li and Bertinetto, Luca and Hu, Weiming and Torr, Philip HS},
+    booktitle={Proceedings of the IEEE conference on computer vision and pattern recognition},
+    year={2019}
+}
+```
 <div align="center">
   <img src="http://www.robots.ox.ac.uk/~qwang/SiamMask/img/SiamMask.jpg" width="600px" />
 </div>
@@ -19,8 +34,8 @@ This is the official implementation with *training* code for SiamMask (CVPR2019)
 3. [Testing Models](#testing-models)
 4. [Training Models](#training-models)
 
-## Environment Setup
-All the code has been tested on Ubuntu 16.04, Python 3.6, Pytorch 0.4.1, CUDA 9.2, RTX 2080 GPUs
+## Environment setup
+This code has been tested on Ubuntu 16.04, Python 3.6, Pytorch 0.4.1, CUDA 9.2, RTX 2080 GPUs
 
 - Clone the repository 
 ```
@@ -34,7 +49,7 @@ source activate siammask
 pip install -r requirements.txt
 bash make.sh
 ```
-- Add the project to PYTHONPATH
+- Add the project to your PYTHONPATH
 ```
 export PYTHONPATH=$PWD:$PYTHONPATH
 ```
@@ -60,7 +75,7 @@ python ../../tools/demo.py --resume SiamMask_DAVIS.pth --config config_davis.jso
 </div>
 
 
-## Testing Models
+## Testing
 - [Setup](#environment-setup) your environment
 - Download test data
 ```shell
@@ -111,7 +126,7 @@ These are the reproduction results from this repository. All results can be down
 - `-LD` means training with large dataset (ytb-bb+ytb-vos+vid+coco+det).
 
 
-## Training Models
+## Training
 
 ### Training Data 
 - Download the [Youtube-VOS](https://youtube-vos.org/dataset/download/), 
@@ -148,7 +163,7 @@ bash test_all.sh -s 1 -e 20 -d VOT2018 -g 4  # test all snapshots with 4 GPUs
 bash test_all.sh -m snapshot/checkpoint_e12.pth -d VOT2018 -n 8 -g 4 # 8 threads with 4 GPUS
 ```
 
-### Training SiamMask model with Refine Module
+### Training SiamMask model with the Refine module
 - [Setup](#environment-setup) your environment
 - In the experiment file, train with the best SiamMask base model
 ```
@@ -179,16 +194,3 @@ bash test_all.sh -s 1 -e 20 -d VOT2018 -g 4
 ## License
 Licensed under an MIT license.
 
-
-## Citing SiamMask
-
-If you use this code, please cite:
-
-```
-@article{Wang2019SiamMask,
-    title={Fast Online Object Tracking and Segmentation: A Unifying Approach},
-    author={Wang, Qiang and Zhang, Li and Bertinetto, Luca and Hu, Weiming and Torr, Philip HS},
-    journal={The IEEE Conference on Computer Vision and Pattern Recognition (CVPR)},
-    year={2019}
-}
-```
