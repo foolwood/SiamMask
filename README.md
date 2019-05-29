@@ -1,6 +1,6 @@
 # SiamMask
 
-**NEW** Now including code for both training and inference.
+**NEW:** now including code for both training and inference!
 
 
 [![PWC](https://img.shields.io/endpoint.svg?url=https://paperswithcode.com/badge/fast-online-object-tracking-and-segmentation/visual-object-tracking-vot201718)](https://paperswithcode.com/sota/visual-object-tracking-vot201718?p=fast-online-object-tracking-and-segmentation)
@@ -13,7 +13,11 @@ This is the official implementation with *training* code for SiamMask (CVPR2019)
 **[[Paper](https://arxiv.org/abs/1812.05050)] [[Video](https://youtu.be/I_iOVrcpEBw)] [[Project Page](http://www.robots.ox.ac.uk/~qwang/SiamMask)]** <br />
 
 
-## Bibtex
+<div align="center">
+  <img src="http://www.robots.ox.ac.uk/~qwang/SiamMask/img/SiamMask.jpg" width="600px" />
+</div>
+
+### Bibtex
 If you find this code useful, please consider citing:
 
 ```
@@ -24,9 +28,7 @@ If you find this code useful, please consider citing:
     year={2019}
 }
 ```
-<div align="center">
-  <img src="http://www.robots.ox.ac.uk/~qwang/SiamMask/img/SiamMask.jpg" width="600px" />
-</div>
+
 
 ## Contents
 1. [Environment Setup](#environment-setup)
