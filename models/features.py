@@ -3,13 +3,13 @@
 # Licensed under The MIT License
 # Written by Qiang Wang (wangqiang2015 at ia.ac.cn)
 # --------------------------------------------------------
-import torch.nn as nn
+import torch
 import logging
 
 logger = logging.getLogger('global')
 
 
-class Features(nn.Module):
+class Features(torch.nn.Module):
     def __init__(self):
         super(Features, self).__init__()
         self.feature_size = -1
