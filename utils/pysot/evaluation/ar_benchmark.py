@@ -109,12 +109,14 @@ class AccuracyRobustnessBenchmark:
 
                     accuracy_str = "{:^8.3f}".format(accuracy)
                     if accuracy < helight_threshold:
-                        row += f'{Fore.RED}{accuracy_str}{Style.RESET_ALL}|'
+                        row += '{}{}{}|'.format(Fore.RED, accuracy_str, Style.RESET_ALL)
+                        #row += f'{Fore.RED}{accuracy_str}{Style.RESET_ALL}|'
                     else:
                         row += accuracy_str+'|'
                     lost_num_str = "{:^8.3f}".format(lost_number)
                     if lost_number > 0:
-                        row += f'{Fore.RED}{lost_num_str}{Style.RESET_ALL}|'
+                        row += '{}{}{}|'.format(Fore.RED, lost_num_str, Style.RESET_ALL)
+                        # row += f'{Fore.RED}{lost_num_str}{Style.RESET_ALL}|'
                     else:
                         row += lost_num_str+'|'
                 print(row)
