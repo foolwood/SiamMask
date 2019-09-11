@@ -193,6 +193,22 @@ bash test_all.sh -h
 bash test_all.sh -s 1 -e 20 -d VOT2018 -g 4
 ```
 
+### Converting SiamMask model with the refine module to Torch scripts
+- [Setup](#environment-setup) your environment
+- Download the SiamMask model
+```shell
+cd $SiamMask/experiments/siammask_sharp
+wget http://www.robots.ox.ac.uk/~qwang/SiamMask_VOT.pth
+wget http://www.robots.ox.ac.uk/~qwang/SiamMask_DAVIS.pth
+```
+- Run `convert.py`
+
+```shell
+cd $SiamMask/conversion/siammask_sharp
+export PYTHONPATH=$PWD:$PYTHONPATH
+python ../../tools/convert.py --resume SiamMask_DAVIS.pth --config config_davis.json
+```
+
 ## License
 Licensed under an MIT license.
 

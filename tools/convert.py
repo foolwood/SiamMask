@@ -36,7 +36,7 @@ if __name__ == '__main__':
 
     siammask.eval().to(device)
 
-    outdir = './exported_models'
+    outdir = './torch_scripts'
     if not os.path.isdir(outdir):
         os.mkdir(outdir)
 
