@@ -13,7 +13,7 @@ class Anchors:
         self.stride = 8
         self.ratios = [0.33, 0.5, 1, 2, 3]
         self.scales = [8]
-        self.round_dight = 0
+        self.round_digit = 0
         self.image_center = 0
         self.size = 0
         self.anchor_density = 1
@@ -37,9 +37,9 @@ class Anchors:
 
         for x_offset, y_offset in zip(x_offsets.flatten(), y_offsets.flatten()):
             for r in self.ratios:
-                if self.round_dight > 0:
-                    ws = round(math.sqrt(size*1. / r), self.round_dight)
-                    hs = round(ws * r, self.round_dight)
+                if self.round_digit > 0:
+                    ws = round(math.sqrt(size*1. / r), self.round_digit)
+                    hs = round(ws * r, self.round_digit)
                 else:
                     ws = int(math.sqrt(size*1. / r))
                     hs = int(ws * r)

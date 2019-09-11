@@ -6,10 +6,10 @@
         "instance_size": 255,
         "base_size": 8,
         "out_size": 127,
-        "seg_thr": 0.35,
-        "penalty_k": 0.04,
-        "window_influence": 0.4,
-        "lr": 1.0
+        "seg_thr": 0.15,
+        "penalty_k": 0.10,
+        "window_influence": 0.41,
+        "lr": 0.32
     },
     "anchors": {
         "stride": 8,

@@ -25,7 +25,7 @@ class TrackerConfig(object):
     ratios = [0.33, 0.5, 1, 2, 3]
     scales = [8, ]
     anchor_num = len(ratios) * len(scales)
-    round_dight = 0
+    round_digit = 0
     anchor = []
 
     def update(self, newparam=None, anchors=None):
@@ -39,7 +39,7 @@ class TrackerConfig(object):
                 self.total_stride = anchors.stride
                 self.ratios = anchors.ratios
                 self.scales = anchors.scales
-                self.round_dight = anchors.round_dight
+                self.round_digit = anchors.round_digit
         self.renew()
 
     def renew(self):

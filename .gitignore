@@ -105,3 +105,8 @@ venv.bak/
 
 # data
 data/*
+
+# pretrained models
+**/resnet.model
+**/*.pth
+**/*.pt
