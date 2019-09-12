@@ -33,7 +33,6 @@ if __name__ == '__main__':
 
     # Parse Image file
     img_files = sorted(glob.glob(join(args.base_path, '*.jp*')))
-    print(img_files)
     # use generator
     ims = (cv2.imread(imf) for imf in img_files)
 
