@@ -33,13 +33,14 @@ if __name__ == '__main__':
 
     # Parse Image file
     img_files = sorted(glob.glob(join(args.base_path, '*.jp*')))
-    ims = [cv2.imread(imf) for imf in img_files]
+    # use generator
+    ims = (cv2.imread(imf) for imf in img_files)
 
     # Select ROI
     cv2.namedWindow("SiamMask", cv2.WND_PROP_FULLSCREEN)
     # cv2.setWindowProperty("SiamMask", cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
     try:
-        init_rect = cv2.selectROI('SiamMask', ims[0], False, False)
+        init_rect = cv2.selectROI('SiamMask', next(ims), False, False)
         x, y, w, h = init_rect
     except:
         exit()
