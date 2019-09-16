@@ -209,6 +209,12 @@ export PYTHONPATH=$PWD:$PYTHONPATH
 python ../../tools/convert.py --resume SiamMask_DAVIS.pth --config config_davis.json
 ```
 
+- You can find the following seven torch script files under the directory named `torch_scripts`:
+```
+feature_downsampler.pt  mask_conv_kernel.pt  mask_depthwise_conv.pt  rpn_model.pt
+feature_extractor.pt    mask_conv_search.pt  refine_model.pt
+```
+
 ## License
 Licensed under an MIT license.
 
