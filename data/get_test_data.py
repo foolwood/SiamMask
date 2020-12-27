@@ -12,6 +12,10 @@ else:
     print("Loading...")
 
 scripts = trackDat + "/scripts"
+
+copyfile(projectDir + "/filesForMoveToTrackdat/download_vot.py", scripts + "/download_vot.py")
+copyfile(projectDir + "/filesForMoveToTrackdat/unpack_vot.py", scripts + "/unpack_vot.py")
+
 os.chdir(scripts)
 os.system("download_vot.py 2016 dl/vot2016")
 os.system("download_vot.py 2018 dl/vot2018")
