@@ -1,4 +1,4 @@
-[Linux](https://github.com/foolwood/SiamMask/blob/master/README.md) | Windows
+[Linux](https://github.com/zumrudu-anka/SiamMask/blob/master/README.md) | Windows
 
 ## Contents
 - [Contents](#contents)
