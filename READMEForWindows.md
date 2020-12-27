@@ -1,12 +1,11 @@
 [Linux](https://github.com/zumrudu-anka/SiamMask/blob/master/README.md) | Windows
 
 ## Contents
-- [Contents](#contents)
-- [Environment Setup](#environment-setup)
-- [Demo](#demo)
-- [Testing](#testing)
-- [TODO LIST](#todo-list)
-  - [References](#references)
+1. [Environment Setup](#environment-setup)
+2. [Demo](#demo)
+3. [Testing](#testing)
+4. [TODO LIST](#todo-list)
+5. [References](#references)
 
 ## Environment Setup
 - Clone the [Repository](https://github.com/foolwood/SiamMask)
