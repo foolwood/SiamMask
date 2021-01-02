@@ -33,6 +33,7 @@ cd <your project directory>/experiments/siammask_sharp
 python downloadSiamMaskModel.py
 ```
 - Change `tools\demo.py` 26. line `from custom import Custom` to `from experiments.siammask_sharp.custom import Custom`
+- Change `experiments\siammask_sharp\custom.py` 9. line `from resnet import resnet50` to `from .resnet import resnet50`
 - Run demo.py
 ```
 cd <your project directory>/experiments/siammask_sharp
