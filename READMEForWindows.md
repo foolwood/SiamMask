@@ -32,7 +32,7 @@ set PYTHONPATH=%PYTHONPATH%;<your project path>
 cd <your project directory>/experiments/siammask_sharp
 python downloadSiamMaskModel.py
 ```
-- Change 26. line `from custom import Custom` to `from experiments.siammask_sharp.custom import Custom`
+- Change `tools\demo.py` 26. line `from custom import Custom` to `from experiments.siammask_sharp.custom import Custom`
 - Run demo.py
 ```
 cd <your project directory>/experiments/siammask_sharp
