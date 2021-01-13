@@ -1,3 +1,5 @@
+Linux | [Windows](https://github.com/zumrudu-anka/SiamMask/blob/master/READMEForWindows.md)
+
 # SiamMask
 
 **NEW:** now including code for both training and inference!
@@ -29,12 +31,11 @@ If you find this code useful, please consider citing:
 }
 ```
 
-
 ## Contents
 1. [Environment Setup](#environment-setup)
 2. [Demo](#demo)
-3. [Testing Models](#testing-models)
-4. [Training Models](#training-models)
+3. [Testing](#testing)
+4. [Training](#training)
 
 ## Environment setup
 This code has been tested on Ubuntu 16.04, Python 3.6, Pytorch 0.4.1, CUDA 9.2, RTX 2080 GPUs
