@@ -12,5 +12,4 @@ pandas==0.23.4
 tqdm==4.29.1
 tensorboardX==1.6
 opencv_python==3.4.3.18
-torch==0.4.1
 torchvision==0.2.1
