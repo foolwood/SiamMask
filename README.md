@@ -7,6 +7,14 @@
 
 This is the official implementation with *training* code for SiamMask (CVPR2019). For technical details, please refer to:
 
+
+**SiamMask: A Framework for Fast Online Object Tracking and Segmentation** <br />
+[Weiming Hu](https://scholar.google.com/citations?user=Wl4tl4QAAAAJ&hl=en), [Qiang Wang](http://www.robots.ox.ac.uk/~qwang/)\*, [Li Zhang](http://www.robots.ox.ac.uk/~lz)\*, [Luca Bertinetto](http://www.robots.ox.ac.uk/~luca)\*, [Philip H.S. Torr](https://scholar.google.it/citations?user=kPxa2w0AAAAJ&hl=en&oi=ao) (\* denotes equal contribution) <br />
+**TPAMI 2023** <br />
+**[[Paper](https://ieeexplore.ieee.org/document/10036241)] [[ArXiv](https://arxiv.org/abs/2207.02088)]** <br />
+
+
+
 **Fast Online Object Tracking and Segmentation: A Unifying Approach** <br />
 [Qiang Wang](http://www.robots.ox.ac.uk/~qwang/)\*, [Li Zhang](http://www.robots.ox.ac.uk/~lz)\*, [Luca Bertinetto](http://www.robots.ox.ac.uk/~luca)\*, [Weiming Hu](https://scholar.google.com/citations?user=Wl4tl4QAAAAJ&hl=en), [Philip H.S. Torr](https://scholar.google.it/citations?user=kPxa2w0AAAAJ&hl=en&oi=ao) (\* denotes equal contribution) <br />
 **CVPR 2019** <br />
@@ -21,6 +29,17 @@ This is the official implementation with *training* code for SiamMask (CVPR2019)
 If you find this code useful, please consider citing:
 
 ```
+@article{hu2023siammask,
+  title={Siammask: A framework for fast online object tracking and segmentation},
+  author={Hu, Weiming and Wang, Qiang and Zhang, Li and Bertinetto, Luca and Torr, Philip HS},
+  journal={IEEE Transactions on Pattern Analysis and Machine Intelligence},
+  volume={45},
+  number={3},
+  pages={3072--3089},
+  year={2023},
+  publisher={IEEE}
+}
+
 @inproceedings{wang2019fast,
     title={Fast online object tracking and segmentation: A unifying approach},
     author={Wang, Qiang and Zhang, Li and Bertinetto, Luca and Hu, Weiming and Torr, Philip HS},
